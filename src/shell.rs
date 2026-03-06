@@ -31,8 +31,12 @@ impl Shell {
             Task::batch(tasks)
         )
     }
-    pub fn update(&mut self, _update: Update) -> Task<Message> {
-        Task::none()
+    pub fn update(&mut self, update: Update) -> Task<Message> {
+        let mut tasks = Vec::new();
+	for (_,surface) in &mut self.surfaces {
+            tasks.push(surface.update(update.clone()));
+	}
+	Task::batch(tasks)
     }
     pub fn view(&self, id: iced::window::Id) -> Element<'_, Message> {
         match self.surfaces.get(&id) {

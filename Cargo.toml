@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-iced = { version = "0.14.0", features = ["canvas"]}
+iced = { version = "0.14.0", features = ["canvas","image","tokio","wgpu"]}
 iced_layershell = "0.15.0"
 wayland-client = "0.31.13"
+image = "0.25.9"

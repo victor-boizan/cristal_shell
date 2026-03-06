@@ -6,4 +6,4 @@ pub enum Message {
     Update(Update),
 }
 #[derive(Debug, Clone)]
-pub enum Update {}
+pub enum Update {Tick}

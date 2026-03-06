@@ -14,12 +14,15 @@ mod status_bar;
 use status_bar::StatusBar;
 mod corners;
 use corners::Corners;
-
+mod background;
+use background::Background;
 // list all Surfaces Types
-#[derive(Eq,PartialEq)]
+#[derive(Eq,PartialEq,Clone)]
 pub enum SurfaceType {
     StatusBar,
     Corners,
+    WorkspaceBackground,
+    OverviewBackground,
 }
 
 pub type BoxedSurface = Box<dyn Surface>;
@@ -33,12 +36,19 @@ pub trait Surface {
 
 impl SurfaceType {
     pub fn list_all() -> Vec<Self> {
-       vec![Self::StatusBar,Self::Corners] 
+	vec![
+	    Self::WorkspaceBackground,
+	    Self::OverviewBackground,
+	    Self::StatusBar,
+	    Self::Corners,
+	] 
     }
     pub fn new(&self, output: Output) -> BoxedSurface {
         match &self {
             Self::StatusBar  => Box::new(StatusBar::new(output.name)) as BoxedSurface,
             Self::Corners    => Box::new(Corners::new()) as BoxedSurface,
+	    Self::WorkspaceBackground => Box::new(Background::new(self.clone())) as BoxedSurface,
+	    Self::OverviewBackground  => Box::new(Background::new(self.clone())) as BoxedSurface,
         }
     }
 }

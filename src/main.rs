@@ -31,5 +31,6 @@ fn main() {
         ..Default::default()
     }).style(Session::style)
     .theme(Theme::CatppuccinFrappe)
+    .subscription(Session::subscription)
     .run();
 }

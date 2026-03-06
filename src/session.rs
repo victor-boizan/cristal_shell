@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 use crate::{
-    messages::Message,
+    messages::{Message,Update},
     wayland::outputs::Output,
     shell::Shell
 };
@@ -45,6 +45,10 @@ impl Session {
 	    },
 	    _ => Task::none()
 	}
+    }
+    pub fn subscription(&self) -> iced::Subscription<Message> {
+        iced::time::every(std::time::Duration::from_secs(1))
+            .map(|_| Message::Update(Update::Tick))
     }
     pub fn view(&self, id: iced::window::Id) -> Element<'_, Message> {
         for (_, shell) in &self.shells {
