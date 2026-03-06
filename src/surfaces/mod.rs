@@ -18,6 +18,10 @@ mod background;
 use background::Background;
 mod dashboard;
 use dashboard::Dashboard;
+mod runner;
+use runner::Runner;
+mod osd;
+use osd::OSD;
 // list all Surfaces Types
 #[derive(Eq,PartialEq,Clone)]
 pub enum SurfaceType {
@@ -26,6 +30,8 @@ pub enum SurfaceType {
     WorkspaceBackground,
     OverviewBackground,
     Dashboard,
+    Runner,
+    OSD
 }
 
 pub type BoxedSurface = Box<dyn Surface>;
@@ -45,6 +51,8 @@ impl SurfaceType {
 	    Self::WorkspaceBackground,
 	    Self::OverviewBackground,
 	    Self::Dashboard,
+	    Self::Runner,
+	    Self::OSD,
 	] 
     }
     pub fn new(&self, output: Output) -> BoxedSurface {
@@ -54,6 +62,8 @@ impl SurfaceType {
 	    Self::WorkspaceBackground => Box::new(Background::new(self.clone())) as BoxedSurface,
 	    Self::OverviewBackground  => Box::new(Background::new(self.clone())) as BoxedSurface,
 	    Self::Dashboard => Box::new(Dashboard::new(output.name)) as BoxedSurface,
+	    Self::Runner => Box::new(Runner::new(output.name)) as BoxedSurface,
+	    Self::OSD => Box::new(OSD::new(output.name)) as BoxedSurface,
         }
     }
 }
