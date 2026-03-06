@@ -22,6 +22,8 @@ mod runner;
 use runner::Runner;
 mod osd;
 use osd::OSD;
+mod notifications;
+use notifications::Notifications;
 // list all Surfaces Types
 #[derive(Eq,PartialEq,Clone)]
 pub enum SurfaceType {
@@ -31,7 +33,8 @@ pub enum SurfaceType {
     OverviewBackground,
     Dashboard,
     Runner,
-    OSD
+    OSD,
+    Notifications
 }
 
 pub type BoxedSurface = Box<dyn Surface>;
@@ -53,6 +56,7 @@ impl SurfaceType {
 	    Self::Dashboard,
 	    Self::Runner,
 	    Self::OSD,
+	    Self::Notifications,
 	] 
     }
     pub fn new(&self, output: Output) -> BoxedSurface {
@@ -64,6 +68,7 @@ impl SurfaceType {
 	    Self::Dashboard => Box::new(Dashboard::new(output.name)) as BoxedSurface,
 	    Self::Runner => Box::new(Runner::new(output.name)) as BoxedSurface,
 	    Self::OSD => Box::new(OSD::new(output.name)) as BoxedSurface,
+	    Self::Notifications => Box::new(Notifications::new(output.name)) as BoxedSurface,
         }
     }
 }
