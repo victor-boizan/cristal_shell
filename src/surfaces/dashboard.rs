@@ -43,7 +43,7 @@ impl Surface for Dashboard {
     fn update(&mut self, _update: Update) -> Task<Message> {
         Task::none()
     }
-    fn get_type(&self) -> SurfaceType { SurfaceType::StatusBar }
+    fn get_type(&self) -> SurfaceType { SurfaceType::Dashboard }
     fn view(&self) -> Element<'_, Message> {
         container("")
         .style(|theme: &Theme| Style {
