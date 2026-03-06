@@ -12,11 +12,14 @@ use iced::{Element,Task};
 // Surface modules
 mod status_bar;
 use status_bar::StatusBar;
+mod corners;
+use corners::Corners;
 
 // list all Surfaces Types
 #[derive(Eq,PartialEq)]
 pub enum SurfaceType {
     StatusBar,
+    Corners,
 }
 
 pub type BoxedSurface = Box<dyn Surface>;
@@ -30,11 +33,12 @@ pub trait Surface {
 
 impl SurfaceType {
     pub fn list_all() -> Vec<Self> {
-       vec![Self::StatusBar] 
+       vec![Self::StatusBar,Self::Corners] 
     }
     pub fn new(&self, output: Output) -> BoxedSurface {
         match &self {
             Self::StatusBar  => Box::new(StatusBar::new(output.name)) as BoxedSurface,
+            Self::Corners    => Box::new(Corners::new()) as BoxedSurface,
         }
     }
 }
