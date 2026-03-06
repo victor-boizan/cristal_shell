@@ -1,0 +1,59 @@
+use iced_layershell::reexport::{
+    Anchor,Layer,
+    KeyboardInteractivity,
+    NewLayerShellSettings
+};
+use wayland_client::protocol::wl_output;
+use super::Surface;
+use super::SurfaceType;
+use crate::messages::{Message,Update};
+use iced::{
+    Element, Length,
+    Task, color,
+    widget::{
+        container, container::Style,
+    }
+};
+use iced::Theme;
+
+pub struct StatusBar {}
+
+impl StatusBar {
+    pub fn new(_output: String) -> Self {
+        Self{} 
+    }
+}
+
+impl Surface for StatusBar {
+    fn layer_settings(&self, output: wl_output::WlOutput) -> NewLayerShellSettings {
+        let width = 30;
+        NewLayerShellSettings {
+            size: Some((width as u32,0)),
+            exclusive_zone: Some(width),
+            anchor: Anchor::Left | Anchor::Top | Anchor::Bottom,
+            layer: Layer::Top,
+            margin: None,
+            keyboard_interactivity: KeyboardInteractivity::None,
+            events_transparent: false,
+            namespace: Some("cristal_status_bar".to_string()),
+            output_option: iced_layershell::reexport::OutputOption::Output(output.clone()),
+        }
+    }
+    fn update(&mut self, _update: Update) -> Task<Message> {
+        Task::none()
+    }
+    fn get_type(&self) -> SurfaceType { SurfaceType::StatusBar }
+    fn view(&self) -> Element<'_, Message> {
+        container("")
+        .style(|theme: &Theme| Style {
+            text_color: Some(theme.clone().palette().text),
+            background: Some(iced::Background::Color(theme.clone().palette().background)),
+            border: iced::Border{color:color!(0x000000),width: 0.0, radius: iced::border::Radius::new(0)},
+            shadow: iced::Shadow::default(),
+            snap: true, //IDK WTF is this.
+        })
+        .height(Length::Fill)
+        .width(Length::Fill)
+        .into()
+    }
+}

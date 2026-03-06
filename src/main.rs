@@ -8,6 +8,7 @@ use wayland_client::Connection;
 mod wayland;
 mod messages;
 mod shell;
+mod surfaces;
 mod session;
 use session::Session;
 

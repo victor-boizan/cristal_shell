@@ -48,6 +48,7 @@ impl Session {
     }
     pub fn view(&self, id: iced::window::Id) -> Element<'_, Message> {
         for (_, shell) in &self.shells {
+            if shell.surfaces.get(&id).is_none() { continue; }
             return shell.view(id);
 	}
 	"".into()
