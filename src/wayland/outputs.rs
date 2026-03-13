@@ -1,20 +1,16 @@
+use super::WaylandState;
+use std::collections::HashMap;
 use std::sync::Arc;
-use wayland_client::{
-    protocol::{wl_output, wl_registry},
-    Connection, Dispatch, QueueHandle,
-};
+use wayland_client::{protocol::wl_output, Connection, Dispatch, QueueHandle};
 
-#[derive(Debug,PartialEq,Eq,Hash,Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct Output {
-   pub output: wl_output::WlOutput,
-   pub name: String,
-} 
-struct WaylandState {
-    outputs: Vec<Output>,
+    pub output: wl_output::WlOutput,
+    pub name: String,
 }
 
 impl Output {
-    pub fn get_all(conn: Arc<Connection>) -> Vec<Self>{
+    pub fn get_all(conn: Arc<Connection>) -> Vec<Self> {
         let display = conn.display();
 
         let mut event_queue = conn.new_event_queue();
@@ -24,6 +20,8 @@ impl Output {
 
         let mut state = WaylandState {
             outputs: Vec::new(),
+            workspaces: HashMap::new(),
+            workspace_groups: HashMap::new(),
         };
 
         let _ = event_queue.roundtrip(&mut state);
@@ -31,30 +29,6 @@ impl Output {
         // Do another roundtrip to get output names
         let _ = event_queue.roundtrip(&mut state);
         state.outputs
-    }
-
-}
-
-
-
-impl Dispatch<wl_registry::WlRegistry, ()> for WaylandState {
-    fn event(
-        state: &mut Self,
-        registry: &wl_registry::WlRegistry,
-        event: wl_registry::Event,
-        _: &(),
-        _: &Connection,
-        qh: &QueueHandle<Self>,
-    ) {
-        if let wl_registry::Event::Global { name, interface, version } = event {
-            if interface == "wl_output" {
-                let output = registry.bind::<wl_output::WlOutput, _, _>(name, version, qh, ());
-                state.outputs.push(Output {
-                    output,
-                    name: format!("output-{}", name), // Temporary name, will be updated
-                });
-            }
-        }
     }
 }
 

@@ -1,14 +1,14 @@
 use crate::{
-    messages::{Message,Update},
+    messages::{Message, Update},
+    surfaces::{BoxedSurface, SurfaceType},
     wayland::outputs::Output,
-    surfaces::{BoxedSurface,SurfaceType}
 };
 
-use iced::{Element,Task};
+use iced::{Element, Task};
 use std::collections::HashMap;
 
-
 pub struct Shell {
+    pub output: Output,
     pub surfaces: HashMap<iced::window::Id, BoxedSurface>,
 }
 
@@ -21,22 +21,17 @@ impl Shell {
             let id = iced::window::Id::unique();
             let new_surface = surface_type.new(output.clone());
             let settings = new_surface.layer_settings(output.output.clone());
-            surfaces.insert(id,new_surface);
-            tasks.push(Task::done(Message::NewLayerShell{settings,id}));
+            surfaces.insert(id, new_surface);
+            tasks.push(Task::done(Message::NewLayerShell { settings, id }));
         }
-        (
-            Self {
-                surfaces
-            },
-            Task::batch(tasks)
-        )
+        (Self { surfaces, output }, Task::batch(tasks))
     }
     pub fn update(&mut self, update: Update) -> Task<Message> {
         let mut tasks = Vec::new();
-	for (_,surface) in &mut self.surfaces {
+        for (_, surface) in &mut self.surfaces {
             tasks.push(surface.update(update.clone()));
-	}
-	Task::batch(tasks)
+        }
+        Task::batch(tasks)
     }
     pub fn view(&self, id: iced::window::Id) -> Element<'_, Message> {
         match self.surfaces.get(&id) {
