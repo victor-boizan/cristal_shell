@@ -26,7 +26,7 @@ impl Session {
         let mut tasks: Vec<Task<Message>> = Vec::new();
 
         for output in outputs {
-            let (shell, task) = Shell::new(output.clone(), conn.clone());
+            let (shell, task) = Shell::new(output.clone(), wl_state.clone());
             shells.insert(output, shell);
             tasks.push(task);
         }
@@ -47,12 +47,11 @@ impl Session {
     }
     pub fn update(&mut self, message: Message) -> Task<Message> {
         self.wl_state = self.wl_state.update(self.conn.clone());
-        println!("nb workspaces:{}", self.wl_state.workspaces.len());
         match message {
             Message::Update(update) => {
                 let mut tasks = Vec::new();
                 for (_, shell) in &mut self.shells {
-                    tasks.push(shell.update(update.clone()));
+                    tasks.push(shell.update(update.clone(), self.wl_state.clone()));
                 }
                 Task::batch(tasks)
             }

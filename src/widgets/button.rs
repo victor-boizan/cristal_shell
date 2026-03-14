@@ -1,15 +1,20 @@
-use crate::message::Action;
+use crate::messages::Action;
+use crate::messages::Message;
+use iced::color;
+use iced::widget::button;
 use iced::widget::button::Style;
 use iced::widget::text;
 use iced::Element;
 use iced::Theme;
 
+#[derive(Clone)]
 enum ButtonState {
     Disable,
     Inactive,
     Active,
 }
 
+#[derive(Clone)]
 pub struct Button {
     state: ButtonState,
     icon: String,
@@ -28,7 +33,7 @@ impl Button {
         button(text!("{}", self.icon))
             .style(|theme: &Theme, _| Style {
                 text_color: theme.clone().palette().text,
-                background: Some(iced::Background::Color(color!(0xff0000))),
+                background: Some(iced::Background::Color(color!(0x000000))),
                 border: iced::Border {
                     color: color!(0x000000),
                     width: 0.0,

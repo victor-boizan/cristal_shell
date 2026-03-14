@@ -51,7 +51,7 @@ impl WaylandState {
 
         return state;
     }
-    pub fn workspaces_on_output(&self, output: Output) -> Vec<Workspace> {
+    pub fn workspaces_for_output(&self, output: Output) -> Vec<Workspace> {
         let wl_output = output.output;
 
         let mut workspaces = Vec::new();
