@@ -3,11 +3,11 @@ use super::SurfaceType;
 use crate::messages::{Message, Update};
 use crate::wayland::outputs::Output;
 use crate::wayland::WaylandState;
-use crate::widgets::sb_workspaces_list::WorkspacesList;
+use crate::widgets::{sb_battery::Battery, sb_clock::Clock, sb_workspaces_list::WorkspacesList};
 use iced::Theme;
 use iced::{
     color,
-    widget::{column, container, container::Style},
+    widget::{column, container, container::Style, Space},
     Element, Length, Task,
 };
 use iced_layershell::reexport::{Anchor, KeyboardInteractivity, Layer, NewLayerShellSettings};
@@ -16,14 +16,20 @@ use wayland_client::protocol::wl_output;
 pub struct StatusBar {
     workspaces_list: WorkspacesList,
     output: Output,
+    clock: Clock,
+    bat: Battery,
 }
 
 impl StatusBar {
     pub fn new(output: Output, wl_state: WaylandState) -> Self {
         let workspaces = wl_state.workspaces_for_output(output.clone());
+        let clock = Clock {};
+        let bat = Battery::new();
         Self {
             workspaces_list: WorkspacesList::new(workspaces),
             output,
+            clock,
+            bat,
         }
     }
 }
@@ -46,26 +52,32 @@ impl Surface for StatusBar {
     fn update(&mut self, _update: Update, wl_state: WaylandState) -> Task<Message> {
         let workspaces = wl_state.workspaces_for_output(self.output.clone());
         self.workspaces_list.update(workspaces);
+        self.bat.update();
         Task::none()
     }
     fn get_type(&self) -> SurfaceType {
         SurfaceType::StatusBar
     }
     fn view(&self) -> Element<'_, Message> {
-        container(column![self.workspaces_list.view(), ""])
-            .style(|theme: &Theme| Style {
-                text_color: Some(theme.clone().palette().text),
-                background: Some(iced::Background::Color(theme.clone().palette().background)),
-                border: iced::Border {
-                    color: color!(0x000000),
-                    width: 0.0,
-                    radius: iced::border::Radius::new(0),
-                },
-                shadow: iced::Shadow::default(),
-                snap: true, //IDK WTF is this.
-            })
-            .height(Length::Fill)
-            .width(Length::Fill)
-            .into()
+        container(column![
+            self.workspaces_list.view(),
+            Space::new().height(Length::Fill),
+            self.bat.view(),
+            self.clock.view()
+        ])
+        .style(|theme: &Theme| Style {
+            text_color: Some(theme.clone().palette().text),
+            background: Some(iced::Background::Color(theme.clone().palette().background)),
+            border: iced::Border {
+                color: color!(0x000000),
+                width: 0.0,
+                radius: iced::border::Radius::new(0),
+            },
+            shadow: iced::Shadow::default(),
+            snap: true, //IDK WTF is this.
+        })
+        .height(Length::Fill)
+        .width(Length::Fill)
+        .into()
     }
 }
