@@ -160,7 +160,7 @@ impl Surface for Corners {
     fn get_type(&self) -> SurfaceType {
         SurfaceType::Corners
     }
-    fn update(&mut self, _update: Update, _wl_state: WaylandState) -> Task<Message> {
+    fn update(&mut self, _update: Update) -> Task<Message> {
         Task::none()
     }
     fn view(&self) -> Element<'_, Message> {

@@ -49,10 +49,16 @@ impl Surface for StatusBar {
             output_option: iced_layershell::reexport::OutputOption::Output(output.clone()),
         }
     }
-    fn update(&mut self, _update: Update, wl_state: WaylandState) -> Task<Message> {
-        let workspaces = wl_state.workspaces_for_output(self.output.clone());
-        self.workspaces_list.update(workspaces);
-        self.bat.update();
+    fn update(&mut self, update: Update) -> Task<Message> {
+        match update {
+            Update::WaylandUpdate(state) => {
+                let workspaces = state.workspaces_for_output(self.output.clone());
+                println!("updating workspaces:{}", workspaces.len());
+                self.workspaces_list.update(workspaces);
+            }
+            Update::Tick => self.bat.update(),
+            Update::WaylandInit(_) => unreachable!(),
+        }
         Task::none()
     }
     fn get_type(&self) -> SurfaceType {

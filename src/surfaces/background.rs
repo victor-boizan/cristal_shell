@@ -44,7 +44,7 @@ impl Surface for Background {
     fn get_type(&self) -> SurfaceType {
         self.background_type.clone()
     }
-    fn update(&mut self, _update: Update, _wl_state: WaylandState) -> Task<Message> {
+    fn update(&mut self, _update: Update) -> Task<Message> {
         println!("update");
         Task::none()
     }

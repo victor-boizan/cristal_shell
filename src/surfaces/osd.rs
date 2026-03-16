@@ -34,7 +34,7 @@ impl Surface for OSD {
             output_option: iced_layershell::reexport::OutputOption::Output(output.clone()),
         }
     }
-    fn update(&mut self, _update: Update, _wl_state: WaylandState) -> Task<Message> {
+    fn update(&mut self, _update: Update) -> Task<Message> {
         Task::none()
     }
     fn get_type(&self) -> SurfaceType {

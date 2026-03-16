@@ -41,7 +41,7 @@ pub type BoxedSurface = Box<dyn Surface>;
 
 pub trait Surface {
     fn layer_settings(&self, output: wl_output::WlOutput) -> NewLayerShellSettings;
-    fn update(&mut self, update: Update, wl_state: WaylandState) -> Task<Message>;
+    fn update(&mut self, update: Update) -> Task<Message>;
     fn view(&self) -> Element<'_, Message>;
     fn get_type(&self) -> SurfaceType;
 }

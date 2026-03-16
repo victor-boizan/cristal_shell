@@ -26,6 +26,7 @@ impl Shell {
             surfaces.insert(id, new_surface);
             tasks.push(Task::done(Message::NewLayerShell { settings, id }));
         }
+        println!("shell created");
         (
             Self {
                 surfaces,
@@ -35,11 +36,13 @@ impl Shell {
             Task::batch(tasks),
         )
     }
-    pub fn update(&mut self, update: Update, wl_state: WaylandState) -> Task<Message> {
-        self.wl_state = wl_state.clone();
+    //pub fn update(&mut self, update: Update, wl_state: WaylandState) -> Task<Message> {
+    pub fn update(&mut self, update: Update) -> Task<Message> {
+        //self.wl_state = wl_state.clone();
         let mut tasks = Vec::new();
         for (_, surface) in &mut self.surfaces {
-            tasks.push(surface.update(update.clone(), wl_state.clone()));
+            //tasks.push(surface.update(update.clone(), wl_state.clone()));
+            tasks.push(surface.update(update.clone()));
         }
         Task::batch(tasks)
     }

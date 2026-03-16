@@ -1,3 +1,4 @@
+use crate::wayland::WaylandState;
 use iced_layershell::to_layer_message;
 
 #[to_layer_message(multi)]
@@ -7,6 +8,8 @@ pub enum Message {
 }
 #[derive(Debug, Clone)]
 pub enum Update {
+    WaylandInit(WaylandState),
+    WaylandUpdate(WaylandState),
     Tick,
 }
 #[derive(Debug, Clone)]
