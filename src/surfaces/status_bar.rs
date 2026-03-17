@@ -53,7 +53,6 @@ impl Surface for StatusBar {
         match update {
             Update::WaylandUpdate(state) => {
                 let workspaces = state.workspaces_for_output(self.output.clone());
-                println!("updating workspaces:{}", workspaces.len());
                 self.workspaces_list.update(workspaces);
             }
             Update::Tick => self.bat.update(),
@@ -82,6 +81,7 @@ impl Surface for StatusBar {
             shadow: iced::Shadow::default(),
             snap: true, //IDK WTF is this.
         })
+        .padding(iced::Padding::from([5, 5]))
         .height(Length::Fill)
         .width(Length::Fill)
         .into()

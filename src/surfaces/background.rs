@@ -45,11 +45,9 @@ impl Surface for Background {
         self.background_type.clone()
     }
     fn update(&mut self, _update: Update) -> Task<Message> {
-        println!("update");
         Task::none()
     }
     fn view(&self) -> Element<'_, Message> {
-        println!("view");
         let image_widget = image::Image::new(&self.image)
             .width(Length::Fill)
             .height(Length::Fill)

@@ -55,9 +55,7 @@ impl WaylandState {
             let _ = event_queue.roundtrip(&mut state);
 	    let _ = output.send(Message::Update(Update::WaylandInit(state.clone()))).await;
 	    loop {
-		println!("event waiting");
 		event_queue.blocking_dispatch(&mut state).unwrap();
-		println!("event recieved");
 		let _ = output.send(Message::Update(Update::WaylandUpdate(state.clone()))).await;
 	    }
 	})

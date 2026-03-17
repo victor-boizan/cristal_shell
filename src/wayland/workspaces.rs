@@ -3,18 +3,27 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use wayland_client::{backend::ObjectData, protocol::wl_output, Connection, Dispatch, QueueHandle};
 use wayland_protocols::ext::workspace::v1::client::{
-    ext_workspace_group_handle_v1, ext_workspace_handle_v1, ext_workspace_manager_v1,
+    ext_workspace_group_handle_v1, ext_workspace_handle_v1, ext_workspace_handle_v1::State,
+    ext_workspace_manager_v1,
 };
 
 #[derive(Clone, Debug)]
 pub struct Workspace {
     id: String,
     name: String,
+    pub state: WorkspaceState,
 }
 #[derive(Debug, Clone)]
 pub struct WorkspaceGroup {
     pub outputs: Vec<wl_output::WlOutput>,
     pub workspaces: Vec<ext_workspace_handle_v1::ExtWorkspaceHandleV1>,
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum WorkspaceState {
+    Inactive,
+    Active,
+    Urgent,
+    Hidden,
 }
 impl WorkspaceGroup {
     fn new() -> Self {
@@ -29,6 +38,7 @@ impl Workspace {
         Self {
             id: String::from(""),
             name: String::from(""),
+            state: WorkspaceState::Hidden,
         }
     }
     pub fn output_workspaces(conn: Arc<Connection>, output: wl_output::WlOutput) {
@@ -118,7 +128,22 @@ impl Dispatch<ext_workspace_handle_v1::ExtWorkspaceHandleV1, ()> for WaylandStat
                 workspace.name = name;
             }
             ext_workspace_handle_v1::Event::Coordinates { coordinates } => {}
-            ext_workspace_handle_v1::Event::State { state } => {}
+            ext_workspace_handle_v1::Event::State { state } => {
+                println!("workspace state: {:?}", state);
+                match state {
+                    wayland_client::WEnum::Value(State::Active) => {
+                        workspace.state = WorkspaceState::Active
+                    }
+                    wayland_client::WEnum::Value(State::Urgent) => {
+                        workspace.state = WorkspaceState::Urgent
+                    }
+                    wayland_client::WEnum::Value(State::Hidden) => {
+                        workspace.state = WorkspaceState::Hidden
+                    }
+                    wayland_client::WEnum::Value(_) => workspace.state = WorkspaceState::Inactive,
+                    wayland_client::WEnum::Unknown(_) => { /*do nothing*/ }
+                }
+            }
             ext_workspace_handle_v1::Event::Capabilities { capabilities } => {}
             ext_workspace_handle_v1::Event::Removed => {
                 state.workspaces.remove(workspace_handle);
