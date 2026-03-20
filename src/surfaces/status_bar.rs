@@ -1,14 +1,13 @@
 use super::Surface;
 use super::SurfaceType;
 use crate::messages::{Message, Update};
-use crate::wayland::outputs::Output;
 use crate::wayland::WaylandState;
+use crate::wayland::outputs::Output;
 use crate::widgets::{sb_battery::Battery, sb_clock::Clock, sb_workspaces_list::WorkspacesList};
 use iced::Theme;
 use iced::{
-    color,
-    widget::{column, container, container::Style, Space},
-    Element, Length, Task,
+    Element, Length, Task, color,
+    widget::{Space, column, container, container::Style},
 };
 use iced_layershell::reexport::{Anchor, KeyboardInteractivity, Layer, NewLayerShellSettings};
 use wayland_client::protocol::wl_output;
@@ -57,6 +56,7 @@ impl Surface for StatusBar {
             }
             Update::Tick => self.bat.update(),
             Update::WaylandInit(_) => unreachable!(),
+            _ => {}
         }
         Task::none()
     }

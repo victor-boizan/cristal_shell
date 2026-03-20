@@ -49,7 +49,9 @@ impl Dispatch<wl_output::WlOutput, ()> for WaylandState {
                     out.name = name;
                 }
             }
-            _ => {}
+            _ => {
+                println!("output event: {:?}", event);
+            }
         }
     }
 }

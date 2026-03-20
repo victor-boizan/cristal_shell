@@ -1,4 +1,4 @@
-use iced::{color, Color};
+use iced::{Color, color};
 use iced::{Element, Task};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -30,6 +30,9 @@ impl Session {
     pub fn update(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::Update(update) => {
+                if let Update::Toggle = update {
+                    println!("yay");
+                }
                 if let Update::WaylandInit(state) = update {
                     println!("we got an init, their is {} outputs", state.outputs.len());
                     let outputs = state.outputs.clone();
@@ -58,6 +61,7 @@ impl Session {
             iced::time::every(std::time::Duration::from_secs(1))
                 .map(|_| Message::Update(Update::Tick)),
             crate::wayland::WaylandState::subscription(self.conn.clone()).map(|msg| msg),
+            crate::dbus::subscription(),
         ])
     }
     pub fn view(&self, id: iced::window::Id) -> Element<'_, Message> {

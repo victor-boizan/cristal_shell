@@ -5,6 +5,7 @@ use iced_layershell::{
 };
 use wayland_client::Connection;
 
+mod dbus;
 mod messages;
 mod session;
 mod shell;

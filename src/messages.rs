@@ -11,6 +11,7 @@ pub enum Update {
     WaylandInit(WaylandState),
     WaylandUpdate(WaylandState),
     Tick,
+    Toggle,
 }
 #[derive(Debug, Clone)]
 pub enum Action {
