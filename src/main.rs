@@ -21,7 +21,7 @@ fn main() {
     let _ = daemon(
         move || Session::new(session_conn.clone()),
         "Cristal_Shell",
-        Session::update,
+        Session::message,
         Session::view,
     )
     .settings(iced_layershell::Settings {

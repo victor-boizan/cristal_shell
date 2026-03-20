@@ -27,33 +27,39 @@ impl Session {
             text_color: color!(0xffffff),
         }
     }
-    pub fn update(&mut self, message: Message) -> Task<Message> {
+    pub fn message(&mut self, message: Message) -> Task<Message> {
         match message {
-            Message::Update(update) => {
-                if let Update::Toggle = update {
-                    println!("yay");
-                }
-                if let Update::WaylandInit(state) = update {
-                    println!("we got an init, their is {} outputs", state.outputs.len());
-                    let outputs = state.outputs.clone();
+            Message::Update(update) => self.update(update),
+            _ => Task::none(),
+        }
+    }
+    fn update(&mut self, update: Update) -> Task<Message> {
+        match update {
+            Update::Toggle => {
+                println!("yay");
+                return Task::none();
+            }
+            Update::WaylandInit(state) => {
+                println!("we got an init, their is {} outputs", state.outputs.len());
+                let outputs = state.outputs.clone();
 
-                    self.shells = HashMap::new();
-                    let mut tasks: Vec<Task<Message>> = Vec::new();
+                self.shells = HashMap::new();
+                let mut tasks: Vec<Task<Message>> = Vec::new();
 
-                    for output in outputs {
-                        let (shell, task) = Shell::new(output.clone(), state.clone());
-                        self.shells.insert(output, shell);
-                        tasks.push(task);
-                    }
-                    return Task::batch(tasks);
+                for output in outputs {
+                    let (shell, task) = Shell::new(output.clone(), state.clone());
+                    self.shells.insert(output, shell);
+                    tasks.push(task);
                 }
+                return Task::batch(tasks);
+            }
+            _ => {
                 let mut tasks = Vec::new();
                 for (_, shell) in &mut self.shells {
                     tasks.push(shell.update(update.clone()));
                 }
                 Task::batch(tasks)
             }
-            _ => Task::none(),
         }
     }
     pub fn subscription(&self) -> iced::Subscription<Message> {
