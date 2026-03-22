@@ -8,7 +8,7 @@ use zbus::{AsyncDrop, Connection, MatchRule, MessageStream, fdo::NameOwnerChange
 pub fn subscription() -> Subscription<Message> {
     Subscription::run(stream).map(|_| {
         println!("message received");
-        Message::Update(Update::Toggle)
+        Message::Update(Update::ToggleDashBoard)
     })
 }
 
@@ -21,7 +21,7 @@ fn stream() -> impl Stream<Item = std::result::Result<zbus::Message, zbus::Error
             //.unwrap()
             .interface("org.cristal.Shell")
             .unwrap()
-            .member("ActionTriggered")
+            .member("ToggleDashBoard")
             .unwrap()
             .build();
         return MessageStream::for_match_rule(

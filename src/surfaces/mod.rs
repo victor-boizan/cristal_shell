@@ -1,7 +1,7 @@
 use crate::{
     messages::{Message, Update},
-    wayland::outputs::Output,
     wayland::WaylandState,
+    wayland::outputs::Output,
 };
 use wayland_client::protocol::wl_output;
 
@@ -53,7 +53,7 @@ impl SurfaceType {
             Self::Corners,
             Self::WorkspaceBackground,
             Self::OverviewBackground,
-            //Self::Dashboard,
+            Self::Dashboard,
             //Self::Runner,
             //Self::OSD,
             //Self::Notifications,

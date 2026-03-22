@@ -1,8 +1,8 @@
 use crate::{
     messages::{Message, Update},
     surfaces::{BoxedSurface, SurfaceType},
-    wayland::outputs::Output,
     wayland::WaylandState,
+    wayland::outputs::Output,
 };
 
 use iced::{Element, Task};
@@ -38,13 +38,40 @@ impl Shell {
     }
     //pub fn update(&mut self, update: Update, wl_state: WaylandState) -> Task<Message> {
     pub fn update(&mut self, update: Update) -> Task<Message> {
-        //self.wl_state = wl_state.clone();
-        let mut tasks = Vec::new();
-        for (_, surface) in &mut self.surfaces {
-            //tasks.push(surface.update(update.clone(), wl_state.clone()));
-            tasks.push(surface.update(update.clone()));
+        match update {
+            Update::ToggleDashBoard => {
+                let mut dashboard_id: Option<iced::window::Id> = None;
+                for (id, surface) in &mut self.surfaces {
+                    if SurfaceType::Dashboard == surface.get_type() {
+                        dashboard_id = Some(id.clone());
+                    }
+                }
+                if let Some(id) = dashboard_id {
+                    println!("Close DashBoard");
+                    self.surfaces.remove(&id);
+                    return iced::window::close::<Message>(id.clone());
+                }
+                println!("Open New DashBoard");
+                let id = iced::window::Id::unique();
+                let surface_type = SurfaceType::Dashboard;
+                let new_surface = surface_type.new(self.output.clone(), self.wl_state.clone());
+                let settings = new_surface.layer_settings(self.output.output.clone());
+                self.surfaces.insert(id, new_surface);
+                Task::done(Message::NewLayerShell { settings, id })
+            }
+            .into(),
+            Update::WaylandInit(_) => {
+                unreachable!()
+            }
+            _ => {
+                let mut tasks = Vec::new();
+                for (_, surface) in &mut self.surfaces {
+                    //tasks.push(surface.update(update.clone(), wl_state.clone()));
+                    tasks.push(surface.update(update.clone()));
+                }
+                Task::batch(tasks)
+            }
         }
-        Task::batch(tasks)
     }
     pub fn view(&self, id: iced::window::Id) -> Element<'_, Message> {
         match self.surfaces.get(&id) {

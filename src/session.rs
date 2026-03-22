@@ -35,10 +35,6 @@ impl Session {
     }
     fn update(&mut self, update: Update) -> Task<Message> {
         match update {
-            Update::Toggle => {
-                println!("yay");
-                return Task::none();
-            }
             Update::WaylandInit(state) => {
                 println!("we got an init, their is {} outputs", state.outputs.len());
                 let outputs = state.outputs.clone();
