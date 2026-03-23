@@ -1,21 +1,14 @@
-use super::SurfaceType;
-use crate::messages::Message;
-use crate::wayland::WaylandState;
+use super::{Surface, SurfaceType};
+use crate::messages::{Message, Update};
 use iced::{Element, Task, Theme};
-
-use iced_layershell::reexport::NewLayerShellSettings;
-use iced_layershell::reexport::{Anchor, KeyboardInteractivity, Layer};
-
-use crate::messages::Update;
+use iced_layershell::reexport::{Anchor, KeyboardInteractivity, Layer, NewLayerShellSettings};
 use wayland_client::protocol::wl_output;
 
-use super::Surface;
 #[derive(Default, Clone)]
 pub struct Corners;
 use iced::{
-    mouse,
-    widget::{canvas, Canvas},
-    Length, Rectangle, Renderer,
+    Length, Rectangle, Renderer, mouse,
+    widget::{Canvas, canvas},
 };
 
 #[derive(Default)]

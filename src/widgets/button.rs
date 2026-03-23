@@ -1,15 +1,12 @@
-use crate::messages::Action;
 use crate::messages::Message;
-use iced::Element;
-use iced::Theme;
-use iced::color;
-use iced::widget::button;
-use iced::widget::button::Style;
-use iced::widget::text;
+use iced::{
+    Element, Theme, color,
+    widget::{button, button::Style, text},
+};
 
 #[derive(Clone, PartialEq, Eq)]
 enum ButtonState {
-    Disable,
+    //Disable,
     Inactive,
     Active,
 }
@@ -18,7 +15,7 @@ enum ButtonState {
 pub struct Button {
     state: ButtonState,
     icon: String,
-    action: Action,
+    //action: Action,
     pub size: f32,
 }
 
@@ -31,12 +28,9 @@ impl Button {
         Self {
             state,
             icon,
-            action: Action::Tick,
+            //action: Action::Tick,
             size: 20.0,
         }
-    }
-    pub fn size(&mut self, new_size: f32) {
-        self.size = new_size
     }
     pub fn view(&self) -> Element<'_, Message> {
         let icon_size: f32 = self.size / f32::sqrt(2.0);

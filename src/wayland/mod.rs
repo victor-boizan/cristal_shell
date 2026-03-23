@@ -1,24 +1,25 @@
 pub mod outputs;
 pub mod workspaces;
 
-use crate::messages::{Message,Update};
-use iced::Subscription;
-use iced::stream;
-use iced::futures::channel::mpsc;
-use iced::futures::sink::SinkExt;
-use iced::futures::Stream;
-use outputs::Output;
-use std::collections::HashMap;
-use std::sync::Arc;
-use wayland_client::{
-    protocol::{wl_output, wl_registry},
-    Connection, Dispatch, QueueHandle,
+use crate::messages::{Message, Update};
+use iced::{
+    Subscription,
+    futures::{Stream, channel::mpsc, sink::SinkExt},
+    stream,
 };
-use wayland_protocols::ext::workspace::v1::client::ext_workspace_group_handle_v1;
-use wayland_protocols::ext::workspace::v1::client::ext_workspace_handle_v1;
-use wayland_protocols::ext::workspace::v1::client::ext_workspace_manager_v1;
+use outputs::Output;
+use std::{
+    collections::HashMap,
+    sync::{Arc, OnceLock},
+};
+use wayland_client::{
+    Connection, Dispatch, QueueHandle,
+    protocol::{wl_output, wl_registry},
+};
+use wayland_protocols::ext::workspace::v1::client::{
+    ext_workspace_group_handle_v1, ext_workspace_handle_v1, ext_workspace_manager_v1,
+};
 use workspaces::{Workspace, WorkspaceGroup};
-use std::sync::OnceLock;
 
 static CONNECTION: OnceLock<Arc<Connection>> = OnceLock::new();
 
@@ -39,26 +40,30 @@ impl WaylandState {
         }
     }
     pub fn subscription(conn: Arc<Connection>) -> Subscription<Message> {
-	CONNECTION.set(conn).ok();
-	Subscription::run(Self::stream)
+        CONNECTION.set(conn).ok();
+        Subscription::run(Self::stream)
     }
     fn stream() -> impl Stream<Item = Message> {
-	let conn = CONNECTION.get().unwrap().clone();
-	stream::channel(0, |mut output: mpsc::Sender<Message>| async move {
-	    let (_sender, mut _receiver) = mpsc::channel::<Message>(0);
+        let conn = CONNECTION.get().unwrap().clone();
+        stream::channel(0, |mut output: mpsc::Sender<Message>| async move {
+            let (_sender, mut _receiver) = mpsc::channel::<Message>(0);
             let display = conn.display();
-	    let mut event_queue = conn.new_event_queue();
-	    let qh = event_queue.handle();
+            let mut event_queue = conn.new_event_queue();
+            let qh = event_queue.handle();
             let _registry = display.get_registry(&qh, ());
-	    let mut state = Self::new();
-	    let _ = event_queue.roundtrip(&mut state);
+            let mut state = Self::new();
             let _ = event_queue.roundtrip(&mut state);
-	    let _ = output.send(Message::Update(Update::WaylandInit(state.clone()))).await;
-	    loop {
-		event_queue.blocking_dispatch(&mut state).unwrap();
-		let _ = output.send(Message::Update(Update::WaylandUpdate(state.clone()))).await;
-	    }
-	})
+            let _ = event_queue.roundtrip(&mut state);
+            let _ = output
+                .send(Message::Update(Update::WaylandInit(state.clone())))
+                .await;
+            loop {
+                event_queue.blocking_dispatch(&mut state).unwrap();
+                let _ = output
+                    .send(Message::Update(Update::WaylandUpdate(state.clone())))
+                    .await;
+            }
+        })
     }
     pub fn workspaces_for_output(&self, output: Output) -> Vec<Workspace> {
         let wl_output = output.output;
@@ -100,17 +105,13 @@ impl Dispatch<wl_registry::WlRegistry, ()> for WaylandState {
                     name: format!("output-{}", name), // Temporary name, will be updated
                 });
             } else if interface == "ext_workspace_manager_v1" {
-                if let workspace = registry
+                let _workspace = registry
                     .bind::<ext_workspace_manager_v1::ExtWorkspaceManagerV1, _, _>(
                         name,
                         version,
                         qh,
                         (),
-                    )
-                {
-                } else {
-                    eprintln!("error binding");
-                }
+                    );
             }
         }
     }

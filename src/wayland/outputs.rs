@@ -1,35 +1,10 @@
 use super::WaylandState;
-use std::collections::HashMap;
-use std::sync::Arc;
-use wayland_client::{protocol::wl_output, Connection, Dispatch, QueueHandle};
+use wayland_client::{Connection, Dispatch, QueueHandle, protocol::wl_output};
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct Output {
     pub output: wl_output::WlOutput,
     pub name: String,
-}
-
-impl Output {
-    pub fn get_all(conn: Arc<Connection>) -> Vec<Self> {
-        let display = conn.display();
-
-        let mut event_queue = conn.new_event_queue();
-        let qh = event_queue.handle();
-
-        let _registry = display.get_registry(&qh, ());
-
-        let mut state = WaylandState {
-            outputs: Vec::new(),
-            workspaces: HashMap::new(),
-            workspace_groups: HashMap::new(),
-        };
-
-        let _ = event_queue.roundtrip(&mut state);
-
-        // Do another roundtrip to get output names
-        let _ = event_queue.roundtrip(&mut state);
-        state.outputs
-    }
 }
 
 impl Dispatch<wl_output::WlOutput, ()> for WaylandState {

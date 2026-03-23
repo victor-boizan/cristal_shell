@@ -1,7 +1,6 @@
 use super::WaylandState;
-use std::collections::HashMap;
 use std::sync::Arc;
-use wayland_client::{backend::ObjectData, protocol::wl_output, Connection, Dispatch, QueueHandle};
+use wayland_client::{Connection, Dispatch, QueueHandle, backend::ObjectData, protocol::wl_output};
 use wayland_protocols::ext::workspace::v1::client::{
     ext_workspace_group_handle_v1, ext_workspace_handle_v1, ext_workspace_handle_v1::State,
     ext_workspace_manager_v1,
@@ -41,43 +40,24 @@ impl Workspace {
             state: WorkspaceState::Hidden,
         }
     }
-    pub fn output_workspaces(conn: Arc<Connection>, output: wl_output::WlOutput) {
-        let display = conn.display();
-
-        let mut event_queue = conn.new_event_queue();
-        let qh = event_queue.handle();
-
-        let _registry = display.get_registry(&qh, ());
-
-        let mut state = WaylandState {
-            outputs: Vec::new(),
-            workspaces: HashMap::new(),
-            workspace_groups: HashMap::new(),
-        };
-
-        let _ = event_queue.roundtrip(&mut state);
-
-        // Do another roundtrip to get output names
-        let _ = event_queue.roundtrip(&mut state);
-
-        for (_key, data) in state.workspace_groups {
-            if data.outputs.contains(&output) {}
-        }
-    }
 }
 
 impl Dispatch<ext_workspace_manager_v1::ExtWorkspaceManagerV1, ()> for WaylandState {
     fn event(
-        state: &mut Self,
-        workspaces: &ext_workspace_manager_v1::ExtWorkspaceManagerV1,
+        _state: &mut Self,
+        _workspaces: &ext_workspace_manager_v1::ExtWorkspaceManagerV1,
         event: ext_workspace_manager_v1::Event,
         _: &(),
         _: &Connection,
         _qh: &QueueHandle<Self>,
     ) {
         match event {
-            ext_workspace_manager_v1::Event::WorkspaceGroup { workspace_group } => {}
-            ext_workspace_manager_v1::Event::Workspace { workspace } => {}
+            ext_workspace_manager_v1::Event::WorkspaceGroup {
+                workspace_group: _workspace_group,
+            } => {}
+            ext_workspace_manager_v1::Event::Workspace {
+                workspace: _workspace,
+            } => {}
             ext_workspace_manager_v1::Event::Done => {}
             ext_workspace_manager_v1::Event::Finished => {}
             _ => unreachable!(), //non-exaustive enum
@@ -127,7 +107,9 @@ impl Dispatch<ext_workspace_handle_v1::ExtWorkspaceHandleV1, ()> for WaylandStat
             ext_workspace_handle_v1::Event::Name { name } => {
                 workspace.name = name;
             }
-            ext_workspace_handle_v1::Event::Coordinates { coordinates } => {}
+            ext_workspace_handle_v1::Event::Coordinates {
+                coordinates: _coordinates,
+            } => {}
             ext_workspace_handle_v1::Event::State { state } => {
                 println!("workspace state: {:?}", state);
                 match state {
@@ -144,7 +126,9 @@ impl Dispatch<ext_workspace_handle_v1::ExtWorkspaceHandleV1, ()> for WaylandStat
                     wayland_client::WEnum::Unknown(_) => { /*do nothing*/ }
                 }
             }
-            ext_workspace_handle_v1::Event::Capabilities { capabilities } => {}
+            ext_workspace_handle_v1::Event::Capabilities {
+                capabilities: _capabilities,
+            } => {}
             ext_workspace_handle_v1::Event::Removed => {
                 state.workspaces.remove(workspace_handle);
                 return;
@@ -175,7 +159,9 @@ impl Dispatch<ext_workspace_group_handle_v1::ExtWorkspaceGroupHandleV1, ()> for 
                 .insert(workspace_group.clone(), WorkspaceGroup::new());
         }
         match event {
-            ext_workspace_group_handle_v1::Event::Capabilities { capabilities } => {}
+            ext_workspace_group_handle_v1::Event::Capabilities {
+                capabilities: _capabilities,
+            } => {}
             ext_workspace_group_handle_v1::Event::OutputEnter { output } => {
                 if let Some(group) = state.workspace_groups.get_mut(workspace_group) {
                     group.outputs.push(output);

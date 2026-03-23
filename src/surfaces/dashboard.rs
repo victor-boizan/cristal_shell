@@ -1,11 +1,10 @@
 use super::Surface;
 use super::SurfaceType;
 use crate::messages::{Message, Update};
-use crate::wayland::WaylandState;
 use iced::Theme;
 use iced::{
     Element, Length, Task, color,
-    widget::{column, container, container::Style, row},
+    widget::{container, container::Style, row},
 };
 use iced_layershell::reexport::{Anchor, KeyboardInteractivity, Layer, NewLayerShellSettings};
 use wayland_client::protocol::wl_output;

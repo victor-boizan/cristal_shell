@@ -3,7 +3,7 @@ use iced::Subscription;
 
 use futures::StreamExt;
 use futures_core::Stream;
-use zbus::{AsyncDrop, Connection, MatchRule, MessageStream, fdo::NameOwnerChanged};
+use zbus::{Connection, MatchRule, MessageStream};
 
 pub fn subscription() -> Subscription<Message> {
     Subscription::run(stream).map(|_| {

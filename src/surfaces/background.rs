@@ -1,15 +1,13 @@
-use crate::messages::Message;
+use super::Surface;
+use crate::{
+    messages::{Message, Update},
+    surfaces::SurfaceType,
+};
 use iced::{Element, Task};
-
-use crate::messages::Update;
-use crate::surfaces::SurfaceType;
-use crate::wayland::WaylandState;
-use iced_layershell::reexport::NewLayerShellSettings;
-use iced_layershell::reexport::{Anchor, KeyboardInteractivity, Layer};
+use iced_layershell::reexport::{Anchor, KeyboardInteractivity, Layer, NewLayerShellSettings};
 use std::path::PathBuf;
 use wayland_client::protocol::wl_output;
 
-use super::Surface;
 #[derive(Clone)]
 pub struct Background {
     background_type: SurfaceType,
@@ -17,8 +15,8 @@ pub struct Background {
 }
 
 use iced::{
-    widget::{container, image},
     Length,
+    widget::{container, image},
 };
 
 impl Surface for Background {
@@ -26,7 +24,9 @@ impl Surface for Background {
         let namespace = match self.background_type {
             SurfaceType::WorkspaceBackground => Some(String::from("Cristal_Background")),
             SurfaceType::OverviewBackground => Some(String::from("Cristal_Overview")),
-	    _ => panic!("Background can only be a Workspace_Background surface or an Overview_Background surface"),
+            _ => panic!(
+                "Background can only be a Workspace_Background surface or an Overview_Background surface"
+            ),
         };
 
         NewLayerShellSettings {
@@ -64,9 +64,15 @@ impl Background {
     pub fn new(background_type: SurfaceType) -> Self {
         let home = std::env::home_dir().unwrap();
         let image: image::Handle = match background_type {
-            SurfaceType::WorkspaceBackground => image::Handle::from_path(PathBuf::from(format!("{}/Wallpaper.jpg",home.display()))),
-	    SurfaceType::OverviewBackground => image::Handle::from_path(PathBuf::from(format!("{}/Overview.jpg",home.display()))),
-	    _ => panic!("Background can only be a Workspace_Background surface or an Overview_Background surface"),
+            SurfaceType::WorkspaceBackground => {
+                image::Handle::from_path(PathBuf::from(format!("{}/Wallpaper.jpg", home.display())))
+            }
+            SurfaceType::OverviewBackground => {
+                image::Handle::from_path(PathBuf::from(format!("{}/Overview.jpg", home.display())))
+            }
+            _ => panic!(
+                "Background can only be a Workspace_Background surface or an Overview_Background surface"
+            ),
         };
         Self {
             image,

@@ -1,12 +1,8 @@
-use super::Surface;
-use super::SurfaceType;
+use super::{Surface, SurfaceType};
 use crate::messages::{Message, Update};
-use crate::wayland::WaylandState;
-use iced::Theme;
 use iced::{
-    color,
+    Element, Length, Task, Theme, color,
     widget::{container, container::Style},
-    Element, Length, Task,
 };
 use iced_layershell::reexport::{Anchor, KeyboardInteractivity, Layer, NewLayerShellSettings};
 use wayland_client::protocol::wl_output;

@@ -1,12 +1,13 @@
-use crate::messages::Message;
-use crate::wayland::workspaces::Workspace;
-use crate::wayland::workspaces::WorkspaceState;
-use crate::widgets::button::Button;
-use iced::{
-    color,
-    widget::{button, container, container::Style, Column},
-    Element,
+use crate::{
+    messages::Message,
+    wayland::workspaces::{Workspace, WorkspaceState},
+    widgets::button::Button,
 };
+use iced::{
+    Element, color,
+    widget::{Column, container, container::Style},
+};
+
 pub struct WorkspacesList {
     workspaces: Vec<Workspace>,
     buttons: Vec<Button>,
