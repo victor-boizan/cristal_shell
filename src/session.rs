@@ -1,4 +1,4 @@
-use iced::{Color, color};
+use iced::{Color, color, theme::Theme, window};
 use iced::{Element, Task};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -12,14 +12,27 @@ use crate::{
 
 pub struct Session {
     shells: HashMap<Output, Shell>, //each output will have its own shell
+    theme_mode: ThemeMode,
     conn: Arc<Connection>,
+}
+#[derive(PartialEq)]
+enum ThemeMode {
+    Dark,
+    Light,
 }
 
 impl Session {
     pub fn new(conn: Arc<Connection>) -> (Self, Task<Message>) {
         let shells: HashMap<Output, Shell> = HashMap::new();
 
-        (Self { shells, conn }, Task::none())
+        (
+            Self {
+                shells,
+                theme_mode: ThemeMode::Dark,
+                conn,
+            },
+            Task::none(),
+        )
     }
     pub fn style(&self, _theme: &iced::Theme) -> iced::theme::Style {
         iced::theme::Style {
@@ -53,6 +66,14 @@ impl Session {
                 }
                 return Task::batch(tasks);
             }
+            Update::ToggleTheme => {
+                if self.theme_mode == ThemeMode::Dark {
+                    self.theme_mode = ThemeMode::Light;
+                } else {
+                    self.theme_mode = ThemeMode::Dark;
+                }
+                Task::none()
+            }
             _ => {
                 let mut tasks = Vec::new();
                 for (_, shell) in &mut self.shells {
@@ -78,5 +99,11 @@ impl Session {
             return shell.view(id);
         }
         "".into()
+    }
+    pub fn theme(&self, _id: window::Id) -> Option<Theme> {
+        match self.theme_mode {
+            ThemeMode::Dark => Some(Theme::CatppuccinFrappe),
+            ThemeMode::Light => Some(Theme::CatppuccinLatte),
+        }
     }
 }

@@ -4,12 +4,10 @@ use iced::futures::channel::mpsc;
 use iced::futures::sink::SinkExt;
 use iced::stream;
 
-use futures::StreamExt;
 use futures_core::Stream;
 use std::future::pending;
 use zbus::connection;
 use zbus::interface;
-use zbus::{Connection, MatchRule, MessageStream};
 
 pub fn subscription() -> Subscription<Message> {
     Subscription::run(dbus_worker)
@@ -33,10 +31,14 @@ impl DBusListen {
         let _ = self.output.send(msg).await;
         format!("toggle {} surface", surface)
     }
+    async fn toggle_theme(&mut self) -> String {
+        let _ = self.output.send(Message::Update(Update::ToggleTheme)).await;
+        format!("toggle theme")
+    }
 }
 
 fn dbus_worker() -> impl Stream<Item = Message> {
-    stream::channel(0, |mut output: mpsc::Sender<Message>| async move {
+    stream::channel(0, |output: mpsc::Sender<Message>| async move {
         let listener = DBusListen { output };
 
         let _conn = connection::Builder::session()

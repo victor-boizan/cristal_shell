@@ -13,6 +13,7 @@ pub enum Update {
     WaylandInit(WaylandState),
     WaylandUpdate(WaylandState),
     ToggleDashBoard,
+    ToggleTheme,
     Tick,
 }
 #[derive(Debug, Clone)]
