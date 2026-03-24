@@ -30,6 +30,10 @@ impl Session {
     pub fn message(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::Update(update) => self.update(update),
+            Message::Test => {
+                println!("test msg");
+                Task::none()
+            }
             _ => Task::none(),
         }
     }
