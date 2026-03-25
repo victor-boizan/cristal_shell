@@ -18,5 +18,6 @@ pub enum Update {
 }
 #[derive(Debug, Clone)]
 pub enum Action {
-    //Tick,
+    ToggleTheme,
+    None, //do nothing.
 }

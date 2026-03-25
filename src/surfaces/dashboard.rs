@@ -1,6 +1,7 @@
 use super::Surface;
 use super::SurfaceType;
 use crate::messages::{Message, Update};
+use crate::widgets::dashboard_pages;
 use iced::Theme;
 use iced::{
     Element, Length, Task, color,
@@ -9,11 +10,15 @@ use iced::{
 use iced_layershell::reexport::{Anchor, KeyboardInteractivity, Layer, NewLayerShellSettings};
 use wayland_client::protocol::wl_output;
 
-pub struct Dashboard {}
+pub struct Dashboard {
+    quicksettings_page: dashboard_pages::QuickSettings,
+}
 
 impl Dashboard {
     pub fn new(_output: String) -> Self {
-        Self {}
+        Self {
+            quicksettings_page: dashboard_pages::QuickSettings::new(),
+        }
     }
 }
 
@@ -43,7 +48,7 @@ impl Surface for Dashboard {
         container(
             row![
                 crate::widgets::dashboard_pages::Fetch::view(),
-                crate::widgets::dashboard_pages::QuickSettings::view(),
+                self.quicksettings_page.view(),
                 crate::widgets::dashboard_pages::NotificationHistory::view(),
             ]
             .spacing(10),

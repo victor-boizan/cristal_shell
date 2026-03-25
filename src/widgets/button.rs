@@ -1,11 +1,11 @@
-use crate::messages::Message;
+use crate::messages::{Action, Message};
 use iced::{
     Element, Theme, color,
     widget::{button, button::Style, text},
 };
 
 #[derive(Clone, PartialEq, Eq)]
-enum ButtonState {
+pub enum ButtonState {
     //Disable,
     Inactive,
     Active,
@@ -15,7 +15,7 @@ enum ButtonState {
 pub struct Button {
     state: ButtonState,
     icon: String,
-    //action: Action,
+    action: Action,
     pub size: f32,
 }
 
@@ -28,8 +28,16 @@ impl Button {
         Self {
             state,
             icon,
-            //action: Action::Tick,
+            action: Action::None,
             size: 20.0,
+        }
+    }
+    pub fn new_button(icon: String, size: f32, state: ButtonState, action: Action) -> Self {
+        Self {
+            state,
+            icon,
+            action,
+            size,
         }
     }
     pub fn view(&self) -> Element<'_, Message> {
@@ -42,6 +50,7 @@ impl Button {
                 .width(icon_size)
                 .height(icon_size),
         )
+        .on_press(Message::Action(self.action.clone()))
         .style(|theme: &Theme, _status| Style {
             text_color: theme.clone().palette().text,
             background: Some(iced::Background::Color(

@@ -1,4 +1,3 @@
-use iced::theme::Theme;
 use iced_layershell::{
     build_pattern::daemon,
     settings::{LayerShellSettings, StartMode},
@@ -34,7 +33,7 @@ fn main() {
         ..Default::default()
     })
     .style(Session::style)
-    .theme(Theme::CatppuccinFrappe)
+    .theme(Session::theme)
     .subscription(Session::subscription)
     .run();
 }

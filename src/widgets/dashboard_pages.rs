@@ -1,4 +1,8 @@
-use crate::messages::Message;
+use super::{
+    button::{Button, ButtonState},
+    ternary_selector::{Ternary, TernaryState},
+};
+use crate::messages::{Action, Message};
 use iced::Theme;
 use iced::{
     Element, Length, color,
@@ -41,23 +45,112 @@ impl Fetch {
     }
 }
 
-pub struct QuickSettings {}
+pub struct QuickSettings {
+    screenshot_icon: Button,
+    game_mode_icon: Button,
+    quick_note_icon: Button,
+    notifications_icon: Button,
+    rotation_icon: Button,
+    coffee_icon: Button,
+    night_icon: Button,
+    theme_icon: Button,
+    anc_selector: Ternary,
+    pwr_profile_selector: Ternary,
+}
 
 impl QuickSettings {
-    pub fn view() -> Element<'static, Message> {
+    pub fn new() -> Self {
+        Self {
+            screenshot_icon: Button::new_button(
+                String::from("󰹑"),
+                30.0,
+                ButtonState::Active,
+                Action::None,
+            ),
+            game_mode_icon: Button::new_button(
+                String::from("󰊖"),
+                30.0,
+                ButtonState::Active,
+                Action::None,
+            ),
+            quick_note_icon: Button::new_button(
+                String::from("󰎚"),
+                30.0,
+                ButtonState::Active,
+                Action::None,
+            ),
+            notifications_icon: Button::new_button(
+                String::from("󰂚"),
+                30.0,
+                ButtonState::Active,
+                Action::None,
+            ),
+            rotation_icon: Button::new_button(
+                String::from("󰑵"),
+                30.0,
+                ButtonState::Active,
+                Action::None,
+            ),
+            coffee_icon: Button::new_button(
+                String::from("󰅶"),
+                30.0,
+                ButtonState::Active,
+                Action::None,
+            ),
+            night_icon: Button::new_button(
+                String::from("󰖔"),
+                30.0,
+                ButtonState::Active,
+                Action::None,
+            ),
+            theme_icon: Button::new_button(
+                String::from("󱎖"),
+                30.0,
+                ButtonState::Active,
+                Action::ToggleTheme,
+            ),
+            anc_selector: Ternary::new(
+                [String::from(""), String::from("󰾆"), String::from("󰗅")],
+                TernaryState::Left,
+                [Action::None, Action::None, Action::None],
+            ),
+            pwr_profile_selector: Ternary::new(
+                [String::from("󰾆"), String::from("󰾅"), String::from("󰓅")],
+                TernaryState::Left,
+                [Action::None, Action::None, Action::None],
+            ),
+        }
+    }
+    pub fn view(&self) -> Element<'_, Message> {
         container(
             column![
-                row![pill(), pill()].spacing(10),
-                row![icon(), pill(), icon()].spacing(10),
-                row![pill(), icon(), icon()].spacing(10),
-                slider(),
+                row![pill(), pill()].spacing(10), //user,network
                 row![
-                    vpill(),
-                    vpill(),
-                    column![row![icon(), icon()].spacing(10), pill()].spacing(10)
+                    self.screenshot_icon.view(),
+                    self.pwr_profile_selector.view(),
+                    self.game_mode_icon.view()
+                ]
+                .spacing(10), //power profile
+                row![
+                    pill(),
+                    self.quick_note_icon.view(),
+                    self.notifications_icon.view()
+                ]
+                .spacing(10), //pomodoro
+                slider(),                         //backlight
+                row![
+                    self.night_icon.view(),
+                    self.theme_icon.view(),
+                    self.rotation_icon.view(),
+                    self.coffee_icon.view()
+                ]
+                .spacing(10), //rotationlock, coffe mode
+                row![
+                    pill(),                   //output
+                    self.anc_selector.view(), //anc
                 ]
                 .spacing(10),
-                slider(),
+                slider(), //volume ctrl
             ]
             .spacing(10),
         )
@@ -115,7 +208,6 @@ fn notification() -> Element<'static, Message> {
         })
         .into()
 }
-
 fn large_logo() -> Element<'static, Message> {
     container("")
         .width(70)
@@ -153,23 +245,6 @@ fn label() -> Element<'static, Message> {
 fn slider() -> Element<'static, Message> {
     container("")
         .width(150)
-        .height(30)
-        .style(|theme: &Theme| Style {
-            text_color: Some(theme.clone().palette().text),
-            background: Some(iced::Background::Color(color!(0x888888))),
-            border: iced::Border {
-                color: color!(0x000000),
-                width: 0.0,
-                radius: iced::border::Radius::new(15),
-            },
-            shadow: iced::Shadow::default(),
-            snap: true, //IDK WTF is this.
-        })
-        .into()
-}
-fn icon() -> Element<'static, Message> {
-    container("")
-        .width(30)
         .height(30)
         .style(|theme: &Theme| Style {
             text_color: Some(theme.clone().palette().text),

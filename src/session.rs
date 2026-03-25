@@ -5,7 +5,7 @@ use std::sync::Arc;
 use wayland_client::Connection;
 
 use crate::{
-    messages::{Message, Update},
+    messages::{Action, Message, Update},
     shell::Shell,
     wayland::outputs::Output,
 };
@@ -43,6 +43,7 @@ impl Session {
     pub fn message(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::Update(update) => self.update(update),
+            Message::Action(action) => self.action(action),
             Message::Test => {
                 println!("test msg");
                 Task::none()
@@ -81,6 +82,19 @@ impl Session {
                 }
                 Task::batch(tasks)
             }
+        }
+    }
+    fn action(&mut self, action: Action) -> Task<Message> {
+        match action {
+            Action::ToggleTheme => {
+                if self.theme_mode == ThemeMode::Dark {
+                    self.theme_mode = ThemeMode::Light;
+                } else {
+                    self.theme_mode = ThemeMode::Dark;
+                }
+                Task::none()
+            }
+            Action::None => Task::none(),
         }
     }
     pub fn subscription(&self) -> iced::Subscription<Message> {
