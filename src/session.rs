@@ -94,6 +94,7 @@ impl Session {
                 }
                 Task::none()
             }
+            Action::ToggleDashBoard => Task::done(Message::Update(Update::ToggleDashBoard)),
             Action::None => Task::none(),
         }
     }

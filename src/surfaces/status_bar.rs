@@ -1,9 +1,17 @@
 use super::Surface;
 use super::SurfaceType;
-use crate::messages::{Message, Update};
-use crate::wayland::WaylandState;
-use crate::wayland::outputs::Output;
-use crate::widgets::{sb_battery::Battery, sb_clock::Clock, sb_workspaces_list::WorkspacesList};
+use crate::{
+    data::system::os::OS,
+    messages::{Action, Message, Update},
+    wayland::WaylandState,
+    wayland::outputs::Output,
+    widgets::{
+        button::{Button, ButtonState},
+        sb_battery::Battery,
+        sb_clock::Clock,
+        sb_workspaces_list::WorkspacesList,
+    },
+};
 use iced::Theme;
 use iced::{
     Element, Length, Task, color,
@@ -13,6 +21,7 @@ use iced_layershell::reexport::{Anchor, KeyboardInteractivity, Layer, NewLayerSh
 use wayland_client::protocol::wl_output;
 
 pub struct StatusBar {
+    os_button: Button,
     workspaces_list: WorkspacesList,
     output: Output,
     clock: Clock,
@@ -21,10 +30,17 @@ pub struct StatusBar {
 
 impl StatusBar {
     pub fn new(output: Output, wl_state: WaylandState) -> Self {
+        let os_button = Button::new_button(
+            OS::current().get_icon(),
+            20.0,
+            ButtonState::Active,
+            Action::ToggleDashBoard,
+        );
         let workspaces = wl_state.workspaces_for_output(output.clone());
         let clock = Clock {};
         let bat = Battery::new();
         Self {
+            os_button,
             workspaces_list: WorkspacesList::new(workspaces),
             output,
             clock,
@@ -65,6 +81,7 @@ impl Surface for StatusBar {
     }
     fn view(&self) -> Element<'_, Message> {
         container(column![
+            self.os_button.view(),
             self.workspaces_list.view(),
             Space::new().height(Length::Fill),
             self.bat.view(),

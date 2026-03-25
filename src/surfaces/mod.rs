@@ -53,10 +53,10 @@ impl SurfaceType {
             Self::Corners,
             Self::WorkspaceBackground,
             Self::OverviewBackground,
-            Self::Dashboard,
-            Self::Runner,
-            Self::OSD,
-            Self::Notifications,
+            //Self::Dashboard,
+            //Self::Runner,
+            //Self::OSD,
+            //Self::Notifications,
         ]
     }
     pub fn new(&self, output: Output, wl_state: WaylandState) -> BoxedSurface {

@@ -19,5 +19,6 @@ pub enum Update {
 #[derive(Debug, Clone)]
 pub enum Action {
     ToggleTheme,
+    ToggleDashBoard,
     None, //do nothing.
 }
