@@ -2,9 +2,8 @@ use super::Surface;
 use super::SurfaceType;
 use crate::{
     data::system::os::OS,
+    data::wayland::{WaylandState, outputs::Output},
     messages::{Action, Message, Update},
-    wayland::WaylandState,
-    wayland::outputs::Output,
     widgets::{
         button::{Button, ButtonState},
         sb_battery::Battery,

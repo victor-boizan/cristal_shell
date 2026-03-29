@@ -1,4 +1,4 @@
-use crate::wayland::WaylandState;
+use crate::data::wayland::WaylandState;
 use iced_layershell::to_layer_message;
 
 #[to_layer_message(multi)]

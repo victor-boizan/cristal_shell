@@ -1,7 +1,6 @@
 use crate::{
+    data::wayland::{WaylandState, outputs::Output},
     messages::{Message, Update},
-    wayland::WaylandState,
-    wayland::outputs::Output,
 };
 use wayland_client::protocol::wl_output;
 

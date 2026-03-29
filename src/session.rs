@@ -5,9 +5,9 @@ use std::sync::Arc;
 use wayland_client::Connection;
 
 use crate::{
+    data::wayland::{WaylandState, outputs::Output},
     messages::{Action, Message, Update},
     shell::Shell,
-    wayland::outputs::Output,
 };
 
 pub struct Session {
@@ -102,7 +102,7 @@ impl Session {
         iced::Subscription::batch([
             iced::time::every(std::time::Duration::from_secs(1))
                 .map(|_| Message::Update(Update::Tick)),
-            crate::wayland::WaylandState::subscription(self.conn.clone()).map(|msg| msg),
+            WaylandState::subscription(self.conn.clone()).map(|msg| msg),
             crate::dbus::subscription(),
         ])
     }

@@ -1,6 +1,6 @@
 use crate::{
+    data::wayland::workspaces::{Workspace, WorkspaceState},
     messages::Message,
-    wayland::workspaces::{Workspace, WorkspaceState},
     widgets::button::Button,
 };
 use iced::{

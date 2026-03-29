@@ -1,8 +1,7 @@
 use crate::{
+    data::wayland::{WaylandState, outputs::Output},
     messages::{Message, Update},
     surfaces::{BoxedSurface, SurfaceType},
-    wayland::WaylandState,
-    wayland::outputs::Output,
 };
 
 use iced::{Element, Task};

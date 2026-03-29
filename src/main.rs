@@ -10,7 +10,6 @@ mod messages;
 mod session;
 mod shell;
 mod surfaces;
-mod wayland;
 mod widgets;
 use session::Session;
 
