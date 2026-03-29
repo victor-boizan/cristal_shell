@@ -18,9 +18,9 @@
 			freetype
 			freetype.dev
 			libGL
-			xorg.libX11
-			xorg.libXcursor
-			xorg.libXrandr
+			libX11
+			libXcursor
+			libXrandr
 			vulkan-loader
 		];
 
