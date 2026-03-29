@@ -37,7 +37,7 @@ impl StatusBar {
             Action::ToggleDashBoard,
         );
         let workspaces = wl_state.workspaces_for_output(output.clone());
-        let clock = Clock {};
+        let clock = Clock::new();
         let bat = Battery::new();
         Self {
             os_button,
@@ -70,7 +70,10 @@ impl Surface for StatusBar {
                 let workspaces = state.workspaces_for_output(self.output.clone());
                 self.workspaces_list.update(workspaces);
             }
-            Update::Tick => self.bat.update(),
+            Update::Tick => {
+                self.clock.update();
+                self.bat.update();
+            }
             Update::WaylandInit(_) => unreachable!(),
             _ => {}
         }

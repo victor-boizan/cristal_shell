@@ -1,17 +1,24 @@
 use crate::messages::Message;
-use chrono::Local;
-use iced::color;
-use iced::widget::{column, container, container::Style, text};
+use chrono::{DateTime, Local};
 use iced::Element;
 use iced::Theme;
-pub struct Clock {}
+use iced::color;
+use iced::widget::{column, container, container::Style, text};
+pub struct Clock {
+    time: DateTime<Local>,
+}
 
 impl Clock {
+    pub fn new() -> Self {
+        Self { time: Local::now() }
+    }
+    pub fn update(&mut self) {
+        self.time = Local::now();
+    }
     pub fn view(&self) -> Element<'_, Message> {
-        let time = Local::now();
         container(column![
-            text(time.format("%H").to_string()),
-            text(time.format("%M").to_string()),
+            text(self.time.format("%H").to_string()),
+            text(self.time.format("%M").to_string()),
         ])
         .style(|theme: &Theme| Style {
             text_color: Some(theme.clone().palette().text),
