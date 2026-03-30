@@ -1,11 +1,12 @@
 use super::{
     button::{Button, ButtonState},
+    slider::Slider,
     ternary_selector::{Ternary, TernaryState},
 };
 use crate::messages::{Action, Message};
 use iced::Theme;
 use iced::{
-    Element, Length, color,
+    Color, Element, Length, color,
     widget::{column, container, container::Style, row},
 };
 
@@ -20,10 +21,10 @@ impl Fetch {
                     column![label(), label(), label(), label()].spacing(10 / 3)
                 ]
                 .spacing(10),
-                row![slider()].spacing(10),
-                row![slider()].spacing(10),
-                row![slider()].spacing(10),
-                row![slider()].spacing(10),
+                //row![slider()].spacing(10),
+                //row![slider()].spacing(10),
+                //row![slider()].spacing(10),
+                //row![slider()].spacing(10),
                 row![pill(), pill()].spacing(10),
             ]
             .width(150)
@@ -56,6 +57,8 @@ pub struct QuickSettings {
     theme_icon: Button,
     anc_selector: Ternary,
     pwr_profile_selector: Ternary,
+    vol_slider: Slider,
+    backlight_slider: Slider,
 }
 
 impl QuickSettings {
@@ -119,6 +122,8 @@ impl QuickSettings {
                 TernaryState::Left,
                 [Action::None, Action::None, Action::None],
             ),
+            vol_slider: Slider::new(String::from("")),
+            backlight_slider: Slider::new(String::from("󰳲")),
         }
     }
     pub fn view(&self) -> Element<'_, Message> {
@@ -130,36 +135,38 @@ impl QuickSettings {
                     self.pwr_profile_selector.view(),
                     self.game_mode_icon.view()
                 ]
-                .spacing(10), //power profile
+                .spacing(10),
                 row![
                     pill(),
                     self.quick_note_icon.view(),
                     self.notifications_icon.view()
                 ]
                 .spacing(10), //pomodoro
-                slider(),                         //backlight
+                self.backlight_slider.view(),
                 row![
                     self.night_icon.view(),
                     self.theme_icon.view(),
                     self.rotation_icon.view(),
                     self.coffee_icon.view()
                 ]
-                .spacing(10), //rotationlock, coffe mode
+                .spacing(10),
                 row![
                     pill(),                   //output
                     self.anc_selector.view(), //anc
                 ]
                 .spacing(10),
-                slider(), //volume ctrl
+                self.vol_slider.view()
             ]
             .spacing(10),
         )
         .padding(15)
         .style(|theme: &Theme| Style {
             text_color: Some(theme.clone().palette().text),
-            background: Some(iced::Background::Color(color!(0xAA8888))),
+            background: Some(iced::Background::Color(
+                theme.clone().extended_palette().background.weakest.color,
+            )),
             border: iced::Border {
-                color: color!(0xffffff),
+                color: theme.clone().palette().text,
                 width: 5.0,
                 radius: iced::border::Radius::new(30),
             },
@@ -229,23 +236,6 @@ fn label() -> Element<'static, Message> {
     container("")
         .width(70)
         .height(15)
-        .style(|theme: &Theme| Style {
-            text_color: Some(theme.clone().palette().text),
-            background: Some(iced::Background::Color(color!(0x888888))),
-            border: iced::Border {
-                color: color!(0x000000),
-                width: 0.0,
-                radius: iced::border::Radius::new(15),
-            },
-            shadow: iced::Shadow::default(),
-            snap: true, //IDK WTF is this.
-        })
-        .into()
-}
-fn slider() -> Element<'static, Message> {
-    container("")
-        .width(150)
-        .height(30)
         .style(|theme: &Theme| Style {
             text_color: Some(theme.clone().palette().text),
             background: Some(iced::Background::Color(color!(0x888888))),
